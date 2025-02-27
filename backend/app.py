@@ -8,7 +8,7 @@ from shapely.geometry import Point, Polygon
 app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("traffic-violations-a8dc6-firebase-adminsdk-fbsvc-6ef39e88ce.json")
+cred = credentials.Certificate("firebase_api.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
