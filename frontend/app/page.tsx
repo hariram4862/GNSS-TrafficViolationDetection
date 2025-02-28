@@ -1,5 +1,5 @@
 "use client";
-
+import Map from "../components/govt_map";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { db, collection, getDocs, auth } from "@/lib/firebase";
@@ -141,7 +141,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-900 to-black text-white p-6">
-           <ToastContainer />
+      <ToastContainer />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">Violations Dashboard</h1>
@@ -188,12 +188,12 @@ export default function Dashboard() {
           </tbody>
         </motion.table>
       )}
-       <button onClick={() => router.push("/create_geofence")} className="px-4 py-2 bg-green-600 rounded-lg mr-4 hover:bg-green-700">
-              Create Geofence
-            </button>
-            <button onClick={() => router.push("/geo_fences")} className="px-4 py-2 bg-green-600 rounded-lg mr-4 hover:bg-green-700">
-              View Geofences
-            </button>
+      <button onClick={() => router.push("/create_geofence")} className="px-4 py-2 bg-green-600 rounded-lg mr-4 hover:bg-green-700">
+        Create Geofence
+      </button>
+      <button onClick={() => router.push("/geo_fences")} className="px-4 py-2 bg-green-600 rounded-lg mr-4 hover:bg-green-700">
+        View Geofences
+      </button>
 
 
       <div className="flex justify-end mt-8">
@@ -206,7 +206,7 @@ export default function Dashboard() {
           <button className="px-9 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring">
             Export
           </button>
-   
+
 
           {/* Dropdown */}
           {dropdownOpen && (
@@ -228,7 +228,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-
+      <Map />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { db, collection, getDocs, doc, getDoc } from "@/lib/firebase";
 import { motion } from "framer-motion";
 import { query, where } from "@firebase/firestore";
+import Map from "../../components/user_map";
 
 // const Map = dynamic(() => import("@/components/MapComponent"), { ssr: false });
 
@@ -84,7 +85,7 @@ export default function Dashboard() {
           const data = userDocSnap.data();
           setLatitude(data.lat?.toString() || "-");
           setLongitude(data.long?.toString() || "-");
-          
+
         } else {
           console.log("No location data found.");
         }
@@ -154,14 +155,15 @@ export default function Dashboard() {
         </tbody>
       </motion.table>
       <div className="mt-6 h-96 w-full">
-      {/* {latitude && longitude && !isNaN(Number(latitude)) && !isNaN(Number(longitude)) ? (
+        {/* {latitude && longitude && !isNaN(Number(latitude)) && !isNaN(Number(longitude)) ? (
   <Map latitude={parseFloat(latitude)} longitude={parseFloat(longitude)} />
 ) : (
   <p className="text-center text-gray-400">Loading map or invalid coordinates...</p>
 )} */}
 
-</div>
+      </div>
 
+      <Map />
     </div>
   );
 }
