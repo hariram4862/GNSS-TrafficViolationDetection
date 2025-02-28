@@ -144,7 +144,7 @@ export default function Dashboard() {
       <ToastContainer />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">Violations Dashboard</h1>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">Violations shboard</h1>
           <button onClick={handleLogout} className="px-5 py-2 bg-red-600 rounded-lg hover:bg-red-800 transition">
             Logout
           </button>
