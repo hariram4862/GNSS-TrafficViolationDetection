@@ -12,7 +12,7 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { 
 
 const Map = () => {
   const [location, setLocation] = useState({ lat: 12.9716, lng: 77.5946 });
-  const [L, setL] = useState<any>(null); // Store leaflet dynamically
+  const [L, setL] = useState<typeof import("leaflet") | null>(null);
 
   useEffect(() => {
     // Import leaflet dynamically inside useEffect (client-side only)
