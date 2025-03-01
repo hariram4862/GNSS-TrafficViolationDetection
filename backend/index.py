@@ -6,12 +6,29 @@ import time
 from datetime import datetime, timedelta
 import pytz
 import random
+import json
+import os
 
 app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase_api.json")
-firebase_admin.initialize_app(cred)
+
+
+# Load Firebase credentials from the environment variable
+firebase_api_json = os.getenv("FIREBASE_API_JSON")
+
+# Parse the JSON string into a dictionary
+if firebase_api_json:
+    cred_dict = json.loads(firebase_api_json)
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred)
+else:
+    print("FIREBASE_API_JSON environment variable is not set.")
+    exit(1) 
+
+# cred = credentials.Certificate("firebase_api.json")
+# firebase_admin.initialize_app(cred)
+
 db = firestore.client()
 
 # IST Timezone
@@ -87,11 +104,16 @@ def check_geofence_violations():
 
         time.sleep(1)  # Check every second
 
+@app.route("/favicon.ico")
+def favicon():
+    return '', 204
+
+
 @app.route("/")
 def home():
     return jsonify({"message": "Flask Server Running"})
 
 if __name__ == "__main__":
-    check_geofence_violations() 
-    # threading.Thread(target=check_geofence_violations, daemon=True).start()
+    # check_geofence_violations() 
+    threading.Thread(target=check_geofence_violations, daemon=True).start()
     app.run(host="0.0.0.0", port=8000, debug=True)
