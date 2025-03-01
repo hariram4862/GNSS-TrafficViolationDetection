@@ -26,7 +26,7 @@ app = Flask(__name__)
 #     print("FIREBASE_API_JSON environment variable is not set.")
 #     exit(1) 
 
-cred = credentials.Certificate("firebase_api.json")
+cred = credentials.Certificate("firebase_connection.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
