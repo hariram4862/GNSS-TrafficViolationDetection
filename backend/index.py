@@ -6,13 +6,23 @@ import time
 from datetime import datetime, timedelta
 import pytz
 import random
-
+from twilio.rest import Client
+from dotenv import load_dotenv
+import os
 app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("firebase_services.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
+
+
+# Fetch credentials from environment
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # IST Timezone
 IST = pytz.timezone("Asia/Kolkata")
@@ -31,6 +41,28 @@ def generate_unique_violation_id():
             doc_ref = db.collection("violation_details").document(doc_id)
             if not doc_ref.get().exists:
                 return doc_id  # Return the unique document ID
+def send_sms(phone, message):
+    """Sends an SMS notification via Twilio."""
+    try:
+        client.messages.create(
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=phone
+        )
+        print(f"✅ SMS sent to {phone}")
+    except Exception as e:
+        print(f"❌ Error sending SMS: {e}")
+
+def get_phone_number(vehicle_no):
+    """Fetch the phone number from Firestore based on vehicle_no."""
+    users_ref = db.collection("user_details")
+    query = users_ref.where("vehicle_no", "==", vehicle_no).stream()
+
+    for doc in query:
+        user_data = doc.to_dict()
+        return user_data.get("phone")  # Returns phone number if found
+
+    return None  # No matching vehicle number found
 
 def check_geofence_violations():
     """Continuously checks for geofence violations based on entry_date_time."""
@@ -64,6 +96,9 @@ def check_geofence_violations():
                         db.collection("geofence_entries").document(doc.id).delete()
                         print(f"Removed expired geofence entry for {vehicle_no}")
 
+                        # Fetch the phone number from Firestore
+                        phone_number = get_phone_number(vehicle_no)
+
                         # Generate a unique document ID
                         violation_doc_id = generate_unique_violation_id()
                         
@@ -82,6 +117,16 @@ def check_geofence_violations():
                         # Write to Firestore using specific document ID
                         db.collection("violation_details").document(violation_doc_id).set(violation_data)
                         print(f"Successfully logged violation {violation_doc_id} for {vehicle_no} in {geofence_name}")
+
+                        # Send SMS if phone number is found
+                        if phone_number:
+                            message = (
+                                f"Alert! Your vehicle {vehicle_no} is detected in a No Parking zone. "
+                                f"For details, log in to https://gnsstechtitans.vercel.app/user_dashboard "
+                            )
+                            send_sms(phone_number,message)
+                        else:
+                            print(f"⚠️ No phone number found for vehicle {vehicle_no}")
                 except ValueError as e:
                     print(f"Error parsing time for {doc.id}: {e}")
 
