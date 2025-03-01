@@ -10,7 +10,7 @@ import random
 app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase_connection.json")
+cred = credentials.Certificate("firebase_services.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
