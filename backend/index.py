@@ -13,7 +13,8 @@ app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
 
-# Load Firebase credentials from the environment variable
+
+# # Load Firebase credentials from the environment variable
 # firebase_api_json = os.getenv("FIREBASE_API_JSON")
 
 # # Parse the JSON string into a dictionary
@@ -23,18 +24,15 @@ app = Flask(__name__)
 #     firebase_admin.initialize_app(cred)
 # else:
 #     print("FIREBASE_API_JSON environment variable is not set.")
-#     exit(1)
+#     exit(1) 
 
-cred = credentials.Certificate("firebase_connection.json")
+cred = credentials.Certificate("firebase_api.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
 # IST Timezone
 IST = pytz.timezone("Asia/Kolkata")
-
-# Global variable to hold the latest message
-latest_message = "Flask Server Running"
 
 def get_current_ist_time():
     return datetime.now(IST)
@@ -53,7 +51,6 @@ def generate_unique_violation_id():
 
 def check_geofence_violations():
     """Continuously checks for geofence violations based on entry_date_time."""
-    global latest_message  # Access the global message variable
     while True:
         current_time = get_current_ist_time()
         geofence_ref = db.collection("geofence_entries").stream()
@@ -102,10 +99,6 @@ def check_geofence_violations():
                         # Write to Firestore using specific document ID
                         db.collection("violation_details").document(violation_doc_id).set(violation_data)
                         print(f"Successfully logged violation {violation_doc_id} for {vehicle_no} in {geofence_name}")
-                        
-                        # Update the global message with the latest log
-                        latest_message = f"Logged violation {violation_doc_id} for {vehicle_no} in {geofence_name}"
-                        
                 except ValueError as e:
                     print(f"Error parsing time for {doc.id}: {e}")
 
@@ -115,12 +108,12 @@ def check_geofence_violations():
 def favicon():
     return '', 204
 
+
 @app.route("/")
 def home():
-    # Return the latest message in the home route
-    return jsonify({"message": latest_message})
+    return jsonify({"message": "Flask Server Running"})
 
 if __name__ == "__main__":
-    # Start the geofence violation checking in a separate thread
+    # check_geofence_violations() 
     threading.Thread(target=check_geofence_violations, daemon=True).start()
     app.run(host="0.0.0.0", port=8000, debug=True)
