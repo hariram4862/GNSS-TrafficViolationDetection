@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
 import { useEffect, useState, useMemo } from "react";
 import { db, collection, getDocs } from "@/lib/firebase";
+import { DocumentData } from "firebase/firestore"; // Import Firestore types
 
 // Dynamically import React Leaflet components
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
@@ -34,10 +35,11 @@ const Map = () => {
         const noParkingSnap = await getDocs(collection(db, "no_parking"));
         const overSpeedingSnap = await getDocs(collection(db, "over_speeding"));
 
-        const parseCoordinates = (doc: any, type: string) => ({
+        const parseCoordinates = (doc: DocumentData, type: string) => ({
           name: doc.id,
           type,
-          coords: ["c1", "c2", "c3", "c4"].map((c) => doc.data()[c].split(",").map(Number)) as [number, number][],
+          coords: ["c1", "c2", "c3", "c4"]
+            .map((c) => doc.data()[c]?.split(",").map(Number)) as [number, number][],
         });
 
         setNoParkingZones(noParkingSnap.docs.map((doc) => parseCoordinates(doc, "No Parking")));
