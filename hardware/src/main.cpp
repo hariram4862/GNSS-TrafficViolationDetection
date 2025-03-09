@@ -185,17 +185,17 @@ bool isInsideGeofence(double lat, double lon)
         double lat3 = geo.c3_lat, lon3 = geo.c3_lon;
         double lat4 = geo.c4_lat, lon4 = geo.c4_lon;
 
-        // Check if the point is exactly on any edge
-        if (isPointOnEdge(lat, lon, lat1, lon1, lat2, lon2) ||
-            isPointOnEdge(lat, lon, lat2, lon2, lat3, lon3) ||
-            isPointOnEdge(lat, lon, lat3, lon3, lat4, lon4) ||
-            isPointOnEdge(lat, lon, lat4, lon4, lat1, lon1))
-        {
+        // // Check if the point is exactly on any edge
+        // if (isPointOnEdge(lat, lon, lat1, lon1, lat2, lon2) ||
+        //     isPointOnEdge(lat, lon, lat2, lon2, lat3, lon3) ||
+        //     isPointOnEdge(lat, lon, lat3, lon3, lat4, lon4) ||
+        //     isPointOnEdge(lat, lon, lat4, lon4, lat1, lon1))
+        // {
 
-            activeGeofence = geo.name;
-            Serial.println("Inside - On the Edge");
-            return true;
-        }
+        //     activeGeofence = geo.name;
+        //     Serial.println("Inside - On the Edge");
+        //     return true;
+        // }
 
         // Ray-Casting Algorithm for inside check
         if ((lat1 > lat) != (lat2 > lat) && lon < (lon2 - lon1) * (lat - lat1) / (lat2 - lat1) + lon1)
